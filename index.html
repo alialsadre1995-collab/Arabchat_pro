@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>شات الوطن العربي</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="appbar">شات الوطن العربي 💬</header>
+
+  <!-- شاشة الدخول -->
+  <section id="login">
+    <div class="card">
+      <h2>دخول</h2>
+      <input id="nick" maxlength="20" placeholder="الاسم المستعار (إنجليزي فقط)" />
+      <details class="adm">
+        <summary>تسجيل دخول مشرف</summary>
+        <input id="adminName" placeholder="اسم الأدمن (ArabAdmin)" />
+        <input id="adminToken" placeholder="رمز الأدمن (az77@)" />
+      </details>
+      <button id="joinBtn">دخول الغرفة</button>
+      <p class="note">يسمح فقط بحروف إنجليزية/أرقام/(- _). الاسم العربي يتحول تلقائياً إلى Guest.</p>
+    </div>
+  </section>
+
+  <!-- شاشة الدردشة -->
+  <section id="chat" hidden>
+    <aside class="side">
+      <div class="side-head">
+        <span>المتواجدون</span>
+        <button id="banListBtn" class="ghost">قائمة المحظورين</button>
+      </div>
+      <ul id="roster"></ul>
+    </aside>
+
+    <main class="room">
+      <ul id="msgs"></ul>
+
+      <div id="pmPanel" hidden>
+        <div class="pm-head">
+          <span id="pmWith"></span>
+          <button id="pmClose" class="ghost">×</button>
+        </div>
+        <ul id="pmMsgs"></ul>
+      </div>
+
+      <form id="composer" autocomplete="off">
+        <button type="button" id="sendBtn" class="send">إرسال</button>
+        <input id="text" placeholder="اكتب..." />
+      </form>
+    </main>
+  </section>
+
+  <template id="msgTpl">
+    <li class="m"><span class="u"></span><span class="t"></span></li>
+  </template>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
