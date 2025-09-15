@@ -13,8 +13,8 @@ const PORT = process.env.PORT || 3000;
 
 // ===== إعدادات عامة =====
 const ROOM = "#الوطن_العربي";
-const ADMIN_USER = "ArabAdmin";
-const ADMIN_PASS = "az77@";
+const ADMIN_USER = "rido";
+const ADMIN_PASS = "1200@";
 const PUBLIC_HISTORY_LIMIT = 300;
 const PM_HISTORY_LIMIT = 150;
 
