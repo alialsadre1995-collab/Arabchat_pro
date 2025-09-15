@@ -1,11 +1,8 @@
 {
-  "name": "arabchat-pro-whatsapp",
-  "version": "4.0.0",
-  "description": "ArabChat WhatsApp-like: stable iPhone UI, PM spy, temp ops, star badge, history & admin tools",
+  "name": "arabchat-w6n-style",
+  "version": "7.0.0",
+  "description": "ArabChat with stable iPhone UI like chat-w6n",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
-  "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.7.5"
-  }
+  "dependencies": { "express": "^4.18.2", "socket.io": "^4.7.5" }
 }
