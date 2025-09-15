@@ -1,7 +1,7 @@
 {
-  "name": "arabchat-whatsapp",
-  "version": "3.0.0",
-  "description": "ArabChat WhatsApp-like PM, iPhone fix, device/IP ban, whois",
+  "name": "arabchat-pro-whatsapp",
+  "version": "4.0.0",
+  "description": "ArabChat WhatsApp-like: stable iPhone UI, PM spy, temp ops, star badge, history & admin tools",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "dependencies": {
