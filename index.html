@@ -3,30 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>شات الوطن العربي</title>
   <meta name="color-scheme" content="dark">
+  <title>شات الوطن العربي</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="hdr">
     <div class="logo">💬 شات الوطن العربي</div>
+    <div id="adminBar" class="adminbar hidden">
+      <button id="btnBans">المحظورون</button>
+    </div>
   </header>
 
   <main class="app">
-    <!-- شاشة الدخول -->
     <section id="login" class="card">
       <h1>دخول</h1>
       <input id="nick" placeholder="الاسم المستعار (إنجليزي فقط)" maxlength="20" dir="ltr">
       <details class="adm">
         <summary>تسجيل دخول مشرف</summary>
-        <input id="auser" placeholder="اسم الأدمن (ArabAdmin)" dir="ltr">
-        <input id="apass" placeholder="رمز الأدمن (az77@)" dir="ltr">
+        <input id="auser" placeholder="اسم الأدمن" dir="ltr">
+        <input id="apass" placeholder="رمز الأدمن" dir="ltr">
       </details>
       <button id="enter">دخول الغرفة</button>
-      <small class="hint">يسمح فقط بحروف إنجليزية/أرقام/_ (3-20). الأسماء العربية تتحول إلى Guest تلقائيًا.</small>
+      <small class="hint">يسمح فقط بـ A-Z a-z 0-9 _ (3-20). الأسماء العربية تتحول إلى Guest تلقائيًا.</small>
     </section>
 
-    <!-- شاشة الشات -->
     <section id="chat" class="hidden">
       <aside id="sidebar" class="sidebar">
         <div class="sidehead">
@@ -47,11 +48,16 @@
 
         <div class="composer">
           <input id="text" placeholder="اكتب رسالة…">
-          <button id="send">إرسال</button>
+          <button id="send" class="sendbtn">إرسال</button>
+        </div>
+
+        <div class="stickers">
+          <button class="st">😀</button><button class="st">😂</button><button class="st">😅</button>
+          <button class="st">😍</button><button class="st">😎</button><button class="st">🤔</button>
+          <button class="st">😭</button><button class="st">😡</button><button class="st">👍</button>
         </div>
       </div>
 
-      <!-- لوحة إجراء على مستخدم -->
       <div id="actionSheet" class="sheet hidden">
         <div class="sheettop">
           <b id="sheetTitle">إجراءات</b>
@@ -60,7 +66,6 @@
         <div id="sheetBody" class="sheetbtns"></div>
       </div>
 
-      <!-- نافذة الرسائل الخاصة -->
       <div id="pmBox" class="sheet hidden">
         <div class="sheettop">
           <b id="pmTitle">رسالة خاصة</b>
@@ -70,10 +75,20 @@
           <input id="pmText" placeholder="اكتب رسالة خاصة…">
           <button id="pmSend">إرسال</button>
         </div>
+        <ul id="pmLog" class="pmLog"></ul>
+      </div>
+
+      <div id="bansBox" class="sheet hidden">
+        <div class="sheettop">
+          <b>قائمة المحظورين (IP)</b>
+          <button id="closeBans">✕</button>
+        </div>
+        <ul id="bansList" class="bans"></ul>
       </div>
     </section>
   </main>
 
+  <audio id="ding" src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA"></audio>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="client.js"></script>
 </body>
