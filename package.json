@@ -1,7 +1,7 @@
 {
   "name": "arabchat-pro",
   "version": "8.0.0",
-  "description": "ArabChat stable like chat-w6n",
+  "description": "ArabChat stable baseline",
   "type": "module",
   "main": "server.js",
   "scripts": {
