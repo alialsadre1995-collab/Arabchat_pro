@@ -1,121 +1,89 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const path = require("path");
+const $ = s => document.querySelector(s);
+const sock = io({ autoConnect: true, reconnection: true, reconnectionAttempts: 10, reconnectionDelay: 1500 });
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" }, pingInterval: 15000, pingTimeout: 30000 });
-const PORT = process.env.PORT || 3000;
+let isOp = false;
+let currentTarget = null;
 
-const ROOM = "#الوطن_العربي";
-const ADMIN_USER = "ArabAdmin";
-const ADMIN_PASS = "az77@";
-
-const users = new Map();      // socket.id -> {nick, ip, isOp}
-const bansByIP = new Set();   // IPs
-
-app.use(express.static(__dirname));
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-
-function clientIP(socket){
-  const xf = socket.handshake.headers["x-forwarded-for"];
-  if (xf && typeof xf === "string") return xf.split(",")[0].trim();
-  return socket.handshake.address || "0.0.0.0";
+function addMsg(html, cls=""){
+  const li = document.createElement("li");
+  li.className = "msg " + cls;
+  li.innerHTML = html;
+  $("#msgs").appendChild(li);
+  $("#msgs").scrollTop = $("#msgs").scrollHeight;
 }
-function listNicks(){ return Array.from(users.values()).map(u=>u.nick); }
-function findByNick(n){ for (const [sid,u] of users.entries()) if (u.nick===n) return { sid, u }; return null; }
-function sys(t){ io.to(ROOM).emit("sys", t); }
-function randGuest(){ return "Guest" + Math.floor(1000 + Math.random()*9000); }
-function isValidNick(n){ return /^[A-Za-z0-9_]{3,20}$/.test(n); }
+function saveSession(nick, isOpFlag){ localStorage.setItem("nick", nick||""); localStorage.setItem("isOp", isOpFlag? "1":"0"); }
 
-io.on("connection", (socket) => {
-  const ip = clientIP(socket);
-  let nick = randGuest();
-  let isOp = false;
+$("#enter").onclick = () => {
+  const nick = $("#nick").value.trim();
+  const auser = $("#auser").value.trim();
+  const apass = $("#apass").value.trim();
+  sock.emit("enter", { nick, adminUser: auser, adminPass: apass });
+  $("#login").classList.add("hidden");
+  $("#chat").classList.remove("hidden");
+};
 
-  socket.on("enter", ({ nick: wantNick, adminUser, adminPass }) => {
-    if (adminUser === ADMIN_USER && adminPass === ADMIN_PASS) { // admin bypass
-      isOp = true;
-      nick = ADMIN_USER;
-    } else {
-      if (bansByIP.has(ip)) { socket.emit("banned", true); return socket.disconnect(true); }
-      if (!isValidNick(String(wantNick||""))) {
-        nick = randGuest();
-        socket.emit("sys","⚠ يُسمح فقط بإنجليزي/أرقام/_ (3-20). تم تحويلك إلى " + nick);
-      } else {
-        nick = String(wantNick).trim();
-        if (listNicks().includes(nick)) { nick = randGuest(); socket.emit("sys","⚠ الاسم مستخدم. تم تحويلك إلى " + nick); }
-      }
-    }
-    socket.join(ROOM);
-    users.set(socket.id, { nick, ip, isOp });
-    socket.emit("hello", { room: ROOM, nick, users: listNicks(), isOp });
-    sys(`✅ ${nick} انضم`);
-    io.to(ROOM).emit("nicks", listNicks());
-  });
+$("#send").onclick = sendMsg;
+$("#text").addEventListener("keydown", e => { if(e.key==="Enter"){ e.preventDefault(); sendMsg(); } });
+function sendMsg(){ const t = $("#text").value; if(!t) return; sock.emit("chat", t); $("#text").value = ""; }
 
-  socket.on("chat", (text) => {
-    const u = users.get(socket.id); if (!u) return;
-    const t = String(text||"").slice(0,1000); if (!t) return;
-    io.to(ROOM).emit("chat", { nick: u.nick, text: t, isOp: u.isOp });
-  });
+document.querySelectorAll(".st").forEach(b => b.onclick = ()=>{ $("#text").value += " " + b.textContent + " "; $("#text").focus(); });
 
-  socket.on("pm", ({to, text}) => {
-    const u = users.get(socket.id); if (!u) return;
-    const tgt = findByNick(String(to||"")); if (!tgt) return socket.emit("sys","⚠ المستخدم غير موجود.");
-    const t = String(text||"").slice(0,1000);
-    io.to(tgt.sid).emit("pm", { from: u.nick, text: t });
-    socket.emit("pm-sent", { to: tgt.u.nick, text: t });
-  });
+$("#openSide").onclick = ()=> $("#sidebar").classList.add("open");
+$("#closeSide").onclick = ()=> $("#sidebar").classList.remove("open");
 
-  socket.on("admin-info", (nickTarget) => {
-    const u = users.get(socket.id); if (!u?.isOp) return;
-    const t = findByNick(String(nickTarget||"")); if (!t) return socket.emit("sys","⚠ المستخدم غير موجود.");
-    socket.emit("admin-info", { nick: t.u.nick, ip: t.u.ip });
-  });
+$("#closeSheet").onclick = ()=> $("#actionSheet").classList.add("hidden");
+$("#closePm").onclick = ()=> $("#pmBox").classList.add("hidden");
+$("#pmSend").onclick = ()=> { const txt = $("#pmText").value.trim(); if(!txt || !currentTarget) return; sock.emit("pm", { to: currentTarget, text: txt }); $("#pmText").value = ""; logPM(`أنت ➜ ${currentTarget}: ${txt}`); };
 
-  socket.on("admin-kick", (nickTarget) => {
-    const u = users.get(socket.id); if (!u?.isOp) return;
-    const t = findByNick(String(nickTarget||"")); if (!t) return socket.emit("sys","⚠ المستخدم غير موجود.");
-    io.to(t.sid).emit("sys","🚫 تم طردك.");
-    io.sockets.sockets.get(t.sid)?.disconnect(true);
-    users.delete(t.sid);
-    sys(`⛔ ${t.u.nick} تم طرده بواسطة ${u.nick}`);
-    io.to(ROOM).emit("nicks", listNicks());
-  });
+$("#btnBans").onclick = ()=> { sock.emit("admin-bans-list"); };
+$("#closeBans").onclick = ()=> $("#bansBox").classList.add("hidden");
 
-  socket.on("admin-ban", (nickTarget) => {
-    const u = users.get(socket.id); if (!u?.isOp) return;
-    const t = findByNick(String(nickTarget||"")); if (!t) return socket.emit("sys","⚠ المستخدم غير موجود.");
-    bansByIP.add(t.u.ip);
-    io.to(t.sid).emit("sys","🚫 تم حظرك.");
-    io.sockets.sockets.get(t.sid)?.disconnect(true);
-    users.delete(t.sid);
-    sys(`🚫 ${t.u.nick} (IP: ${t.u.ip}) تم حظره بواسطة ${u.nick}`);
-    io.to(ROOM).emit("nicks", listNicks());
-  });
+sock.on("banned", ()=> { addMsg("🚫 محظور من الدخول.", "sys"); });
+sock.on("hello", ({room, nick, users, isOp: op}) => {
+  isOp = !!op; saveSession(nick, isOp);
+  if (isOp) $("#adminBar").classList.remove("hidden");
+  addMsg(`🎉 أهلاً <span class="nick ${isOp?'op':''}">${nick}</span> — دخلت ${room}`, "sys");
+  renderNicks(users); $("#count").textContent = users.length;
+});
+sock.on("nicks", list => { renderNicks(list); $("#count").textContent = list.length; });
+sock.on("sys", t => addMsg(`💬 <span class="sys">${escapeHTML(t)}</span>`, "sys"));
+sock.on("chat", ({nick, text, isOp}) => addMsg(`<span class="nick ${isOp?'op':''}">${nick}:</span> ${escapeHTML(text)}`));
+sock.on("pm", ({from, text}) => { logPM(`${from}: ${text}`); $("#pmTitle").textContent = "خاص مع " + from; $("#pmBox").classList.remove("hidden"); });
+sock.on("pm-sent", ({to, text}) => { logPM(`أنت ➜ ${to}: ${text}`); });
 
-  socket.on("admin-bans-list", () => {
-    const u = users.get(socket.id); if (!u?.isOp) return;
-    socket.emit("admin-bans-list", Array.from(bansByIP));
-  });
-
-  socket.on("admin-unban-ip", (ip) => {
-    const u = users.get(socket.id); if (!u?.isOp) return;
-    bansByIP.delete(String(ip||""));
-    socket.emit("sys", `✅ تم إلغاء حظر ${ip}`);
-    socket.emit("admin-bans-list", Array.from(bansByIP));
-  });
-
-  socket.on("ping-stay", ()=> socket.emit("pong-stay"));
-
-  socket.on("disconnect", () => {
-    const u = users.get(socket.id); if (!u) return;
-    users.delete(socket.id);
-    sys(`👋 ${u.nick} خرج`);
-    io.to(ROOM).emit("nicks", listNicks());
-  });
+sock.on("admin-info", info => alert(`Nick: ${info.nick}\nIP: ${info.ip}`));
+sock.on("admin-bans-list", arr => {
+  const ul = $("#bansList"); ul.innerHTML="";
+  arr.forEach(ip => { const li = document.createElement("li"); li.innerHTML = `<span>${ip}</span>`; const un = document.createElement("button"); un.textContent = "إلغاء الحظر"; un.onclick = ()=> sock.emit("admin-unban-ip", ip); li.appendChild(un); ul.appendChild(li); });
+  $("#bansBox").classList.remove("hidden");
 });
 
-server.listen(PORT, () => console.log("ArabChat Ultimate on :"+PORT));
+function renderNicks(arr){
+  const ul = $("#nicklist"); ul.innerHTML = "";
+  arr.forEach(n => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${n}</span>${n=== 'ArabAdmin' ? '<span class="badge">مشرف</span>': ''}`;
+    li.onclick = ()=> openActionsFor(n);
+    ul.appendChild(li);
+  });
+}
+function openActionsFor(nick){
+  currentTarget = nick;
+  const body = $("#sheetBody"); body.innerHTML = "";
+  $("#sheetTitle").textContent = "إجراءات لـ " + nick;
+  body.appendChild(makeBtn("رد على رسالة", ()=>{ $("#text").value = `@${nick} `; closeAction(); $("#text").focus(); }));
+  body.appendChild(makeBtn("رسالة خاصة", ()=>{ $("#pmTitle").textContent="خاص مع "+nick; $("#pmBox").classList.remove("hidden"); closeAction(); }));
+  if (isOp){
+    body.appendChild(makeBtn("كشف معلومات", ()=> sock.emit("admin-info", nick)));
+    body.appendChild(makeBtn("طرد", ()=> sock.emit("admin-kick", nick)));
+    body.appendChild(makeBtn("حظر (IP)", ()=> sock.emit("admin-ban", nick)));
+  }
+  $("#actionSheet").classList.remove("hidden");
+}
+function closeAction(){ $("#actionSheet").classList.add("hidden"); }
+function makeBtn(t,fn){ const b=document.createElement("button"); b.textContent=t; b.onclick=fn; return b; }
+
+function logPM(txt){ const ul = $("#pmLog"); const li = document.createElement("li"); li.textContent = txt; ul.appendChild(li); ul.scrollTop = ul.scrollHeight; }
+function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+setInterval(()=>{ sock.emit("ping-stay"); }, 12000);
