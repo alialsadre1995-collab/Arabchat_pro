@@ -1,8 +1,14 @@
 {
-  "name": "arabchat-w6n-style",
-  "version": "7.0.0",
-  "description": "ArabChat with stable iPhone UI like chat-w6n",
+  "name": "arabchat-pro",
+  "version": "8.0.0",
+  "description": "ArabChat stable like chat-w6n (iPhone friendly) with roles, bans, PM spy, country flags",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "dependencies": { "express": "^4.18.2", "socket.io": "^4.7.5" }
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.5",
+    "node-fetch": "^3.3.2"
+  }
 }
