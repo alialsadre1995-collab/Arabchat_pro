@@ -1,0 +1,48 @@
+:root {
+  --bg:#0e1218; --card:#161b22; --fg:#e6edf3; --muted:#9aa4b2; --acc:#2ea043;
+  --safe: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Tahoma; background:var(--bg); color:var(--fg); }
+.appbar { position:sticky; top:0; padding:12px 16px; background:#10151c; border-bottom:1px solid #222; text-align:center; }
+
+#login, #chat { width: 100%; height: calc(100dvh - 48px); display:flex; }
+#login { align-items:center; justify-content:center; }
+.card { width:min(480px, 92%); background:var(--card); padding:16px; border-radius:12px; border:1px solid #222; }
+.card h2 { margin:4px 0 12px }
+.card input { width:100%; margin:8px 0; padding:10px 12px; background:#0b0f14; color:var(--fg); border:1px solid #283241; border-radius:8px; }
+.card button { width:100%; padding:10px 12px; border:0; border-radius:8px; background:var(--acc); color:#fff; font-weight:600; margin-top:8px; }
+.note { color:var(--muted); font-size:13px; }
+.adm summary { cursor:pointer; color:var(--muted); margin-top:6px; }
+
+#chat { gap:10px; padding:10px; }
+.side { width: 240px; background:var(--card); border:1px solid #222; border-radius:10px; display:flex; flex-direction:column; }
+.side-head { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-bottom:1px solid #222; }
+.ghost { background:transparent; color:var(--muted); border:1px solid #283241; padding:6px 10px; border-radius:8px; }
+#roster { list-style:none; margin:0; padding:6px; overflow:auto; }
+#roster li { padding:6px 8px; border-radius:6px; cursor:pointer; }
+#roster li:hover { background:#0b0f14; }
+
+.room { position:relative; flex:1; background:var(--card); border:1px solid #222; border-radius:10px; display:flex; flex-direction:column; overflow:hidden; }
+#msgs, #pmMsgs { list-style:none; margin:0; padding:10px 12px 90px; overflow:auto; flex:1; }
+.m { margin:6px 0; line-height:1.5; }
+.m .u { font-weight:700; margin-left:8px; }
+.m .t { white-space:pre-wrap; word-break:break-word; }
+
+#pmPanel { position:absolute; inset:0; background:rgba(14,18,24,.9); backdrop-filter: blur(4px); display:flex; flex-direction:column; }
+.pm-head { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-bottom:1px solid #333; }
+#pmMsgs { padding-bottom: 90px; }
+
+#composer { position: sticky; bottom:0; display:flex; gap:8px; padding:8px; background:linear-gradient(transparent, rgba(14,18,24,.95)) , var(--card); border-top:1px solid #222; }
+#text { flex:1; padding:12px 14px; border-radius:10px; border:1px solid #283241; background:#0b0f14; color:var(--fg); }
+.send { padding:12px 16px; border-radius:10px; border:0; background:var(--acc); color:#fff; font-weight:700; }
+@supports (height: 100dvh) {
+  #msgs, #pmMsgs { padding-bottom: calc(82px + var(--safe)); }
+  #composer { padding-bottom: calc(8px + var(--safe)); }
+}
+
+/* ميديا للجوال: نخفي العمود الجانبي بزر قابل للفتح لاحقًا */
+@media (max-width: 900px) {
+  .side { display:none; }
+}
