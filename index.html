@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>شات الوطن العربي</title>
+  <meta name="color-scheme" content="dark">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hdr">
+    <div class="logo">💬 شات الوطن العربي</div>
+  </header>
+
+  <main class="app">
+    <!-- شاشة الدخول -->
+    <section id="login" class="card">
+      <h1>دخول</h1>
+      <input id="nick" placeholder="الاسم المستعار (إنجليزي فقط)" maxlength="20" dir="ltr">
+      <details class="adm">
+        <summary>تسجيل دخول مشرف</summary>
+        <input id="auser" placeholder="اسم الأدمن (ArabAdmin)" dir="ltr">
+        <input id="apass" placeholder="رمز الأدمن (az77@)" dir="ltr">
+      </details>
+      <button id="enter">دخول الغرفة</button>
+      <small class="hint">يسمح فقط بحروف إنجليزية/أرقام/_ (3-20). الأسماء العربية تتحول إلى Guest تلقائيًا.</small>
+    </section>
+
+    <!-- شاشة الشات -->
+    <section id="chat" class="hidden">
+      <aside id="sidebar" class="sidebar">
+        <div class="sidehead">
+          <b>المتواجدون</b>
+          <button id="closeSide">✕</button>
+        </div>
+        <ul id="nicklist"></ul>
+      </aside>
+
+      <div class="pane">
+        <div class="topbar">
+          <button id="openSide" class="ghost">👥</button>
+          <div class="room">#الوطن_العربي</div>
+          <div id="count" class="count">0</div>
+        </div>
+
+        <ul id="msgs" class="msgs"></ul>
+
+        <div class="composer">
+          <input id="text" placeholder="اكتب رسالة…">
+          <button id="send">إرسال</button>
+        </div>
+      </div>
+
+      <!-- لوحة إجراء على مستخدم -->
+      <div id="actionSheet" class="sheet hidden">
+        <div class="sheettop">
+          <b id="sheetTitle">إجراءات</b>
+          <button id="closeSheet">✕</button>
+        </div>
+        <div id="sheetBody" class="sheetbtns"></div>
+      </div>
+
+      <!-- نافذة الرسائل الخاصة -->
+      <div id="pmBox" class="sheet hidden">
+        <div class="sheettop">
+          <b id="pmTitle">رسالة خاصة</b>
+          <button id="closePm">✕</button>
+        </div>
+        <div class="pmwrap">
+          <input id="pmText" placeholder="اكتب رسالة خاصة…">
+          <button id="pmSend">إرسال</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
