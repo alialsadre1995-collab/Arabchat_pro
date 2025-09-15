@@ -1,36 +1,40 @@
 *{box-sizing:border-box}html,body{height:100%}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Tahoma,Arial,sans-serif;background:#0b0f17;color:#e5e7eb}
-.hdr{position:sticky;top:0;background:#0f1624;border-bottom:1px solid #1f2a3d;padding:12px 16px;color:#facc15;font-weight:700}
-.app{max-width:900px;margin:0 auto;padding:14px}
+body{margin:0;background:#0b0f17;color:#e5e7eb;font-family:system-ui,-apple-system,Segoe UI,Tahoma,Arial,sans-serif}
+.hdr{position:sticky;top:0;background:#0f1624;border-bottom:1px solid #1f2a3d;padding:10px 12px;display:flex;gap:10px;align-items:center;z-index:5}
+.logo{color:#facc15;font-weight:700}
+.adminbar button{border:1px solid #273449;background:#0b0f17;color:#e5e7eb;border-radius:10px;padding:6px 10px}
+.hidden{display:none}
+.app{max-width:900px;margin:0 auto;padding:12px}
 .card{background:#0f1624;border:1px solid #1f2a3d;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .card input{padding:12px;border-radius:12px;border:1px solid #273449;background:#0b0f17;color:#e5e7eb}
 .card button{padding:12px;border-radius:12px;border:1px solid #22c55e;background:#16a34a;color:#fff;font-weight:700}
-.adm{border:1px dashed #273449;border-radius:12px;padding:8px}
-.hidden{display:none}
-/* layout */
-#chat{display:grid;grid-template-columns:280px 1fr;gap:14px}
+.hint{color:#94a3b8}
+#chat{display:grid;grid-template-columns:280px 1fr;gap:12px}
 .sidebar{background:#0f1624;border:1px solid #1f2a3d;border-radius:12px;height:70vh;overflow:auto;padding:10px}
 .sidehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 #nicklist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-#nicklist li{background:#0b0f17;border:1px solid #1f2a3d;border-radius:10px;padding:8px;display:flex;justify-content:space-between;align-items:center}
+#nicklist li{background:#0b0f17;border:1px solid #1f2a3d;border-radius:10px;padding:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .badge{font-size:12px;color:#f59e0b}
 .pane{display:flex;flex-direction:column;gap:8px}
 .topbar{display:flex;justify-content:space-between;align-items:center}
 .count{border:1px solid #273449;border-radius:999px;padding:4px 10px;color:#93a3b8}
-.msgs{list-style:none;margin:0;padding:8px;border:1px solid #1f2a3d;border-radius:12px;flex:1;overflow:auto}
+.msgs{list-style:none;margin:0;padding:8px;border:1px solid #1f2a3d;border-radius:12px;flex:1;overflow:auto;height:52vh}
 .msg{margin:6px 0}
 .nick{color:#60a5fa;font-weight:700}
 .op{color:#f59e0b}
 .sys{color:#94a3b8}
 .composer{display:grid;grid-template-columns:1fr auto;gap:8px}
 .composer input{padding:12px;border-radius:12px;border:1px solid #273449;background:#0b0f17;color:#e5e7eb}
-.composer button{padding:12px 16px;border-radius:12px;border:1px solid #22c55e;background:#16a34a;color:#fff}
+.sendbtn{padding:12px 16px;border-radius:12px;border:1px solid #22c55e;background:#16a34a;color:#fff}
 .ghost{background:transparent;border:1px solid #273449;color:#e5e7eb;border-radius:10px;padding:6px 10px}
-/* sheets */
-.sheet{position:fixed;left:0;right:0;bottom:0;background:#0f1624;border-top:1px solid #1f2a3d;border-radius:14px 14px 0 0;padding:12px}
+.stickers{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.st{border:1px solid #273449;background:#0b0f17;color:#fff;border-radius:10px;padding:6px 8px}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#0f1624;border-top:1px solid #1f2a3d;border-radius:14px 14px 0 0;padding:12px;z-index:9}
 .sheettop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .sheetbtns{display:grid;gap:8px}
 .sheetbtns button{padding:12px;border-radius:12px;border:1px solid #273449;background:#0b0f17;color:#e5e7eb}
 .pmwrap{display:grid;grid-template-columns:1fr auto;gap:8px}
-/* responsive */
-@media(max-width:760px){ #chat{grid-template-columns:1fr} .sidebar{position:fixed;inset:60px 10px 10px 10px;z-index:5;display:none} .sidebar.open{display:block} }
+.pmLog{list-style:none;margin:8px 0 0;padding:0;max-height:30vh;overflow:auto}
+.bans{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.bans li{display:flex;justify-content:space-between;align-items:center;background:#0b0f17;border:1px solid #1f2a3d;border-radius:10px;padding:8px}
+@media(max-width:760px){ #chat{grid-template-columns:1fr} .sidebar{position:fixed;inset:70px 10px 10px 10px;z-index:8;display:none} .sidebar.open{display:block} }
